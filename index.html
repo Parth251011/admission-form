@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Admission Data</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #333;
+            text-align: center;
+        }
+        form {
+            display: grid;
+            gap: 10px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        #paymentBtn, #detailsBtn {
+            background-color: #f39c12;
+        }
+        #paymentBtn:hover, #detailsBtn:hover {
+            background-color: #e67e22;
+        }
+        .search-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        #searchInput {
+            flex-grow: 1;
+        }
+        #searchBtn {
+            background-color: #f39c12;
+        }
+        #searchBtn:hover {
+            background-color: #e67e22;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Student Admission Form</h1>
+        <form id="admissionForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" required>
+            
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
+            
+            <label for="phone">Phone:</label>
+            <input type="tel" id="phone" required>
+            
+            <label for="dob">Date of Birth:</label>
+            <input type="date" id="dob" required>
+            
+            <label for="course">Course:</label>
+            <select id="course" required>
+                <option value="">Select a course</option>
+                <option value="Computer Science">Computer Science</option>
+                <option value="Engineering">Engineering</option>
+                <option value="Business">Business</option>
+                <option value="Arts">Arts</option>
+            </select>
+            
+            <button type="submit">Submit</button>
+        </form>
+        
+        <h2>Admitted Students</h2>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search by name...">
+            <button id="searchBtn">Search</button>
+        </div>
+        <table id="studentsTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Date of Birth</th>
+                    <th>Course</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        
+        <div class="button-container">
+            <button id="paymentBtn">Manage Payments</button>
+            <button id="detailsBtn">Student Details</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('admissionForm');
+            const table = document.getElementById('studentsTable').getElementsByTagName('tbody')[0];
+            const paymentBtn = document.getElementById('paymentBtn');
+            const detailsBtn = document.getElementById('detailsBtn');
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+
+            // Load existing data
+            loadStudents();
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const student = {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    dob: document.getElementById('dob').value,
+                    course: document.getElementById('course').value
+                };
+
+                saveStudent(student);
+                addStudentToTable(student);
+                form.reset();
+            });
+
+            paymentBtn.addEventListener('click', () => {
+                window.location.href = 'payments.html';
+            });
+
+            detailsBtn.addEventListener('click', () => {
+                window.location.href = 'details.html';
+            });
+
+            searchBtn.addEventListener('click', searchStudents);
+
+            function saveStudent(student) {
+                let students = JSON.parse(localStorage.getItem('students')) || [];
+                students.push(student);
+                localStorage.setItem('students', JSON.stringify(students));
+            }
+
+            function loadStudents() {
+                let students = JSON.parse(localStorage.getItem('students')) || [];
+                students.forEach(addStudentToTable);
+            }
+
+            function addStudentToTable(student) {
+                const row = table.insertRow();
+                Object.values(student).forEach(text => {
+                    const cell = row.insertCell();
+                    cell.textContent = text;
+                });
+            }
+
+            function searchStudents() {
+                const searchTerm = searchInput.value.toLowerCase();
+                let students = JSON.parse(localStorage.getItem('students')) || [];
+                const filteredStudents = students.filter(student => 
+                    student.name.toLowerCase().includes(searchTerm)
+                );
+
+                // Clear the table
+                table.innerHTML = '';
+
+                // Add filtered students to the table
+                filteredStudents.forEach(addStudentToTable);
+
+                if (filteredStudents.length === 0) {
+                    const row = table.insertRow();
+                    const cell = row.insertCell();
+                    cell.colSpan = 5;
+                    cell.textContent = 'No matching students found';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
