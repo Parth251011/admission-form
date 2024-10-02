@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Details</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #333;
+            text-align: center;
+        }
+        .search-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        #searchInput {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #searchBtn, #backBtn {
+            background-color: #f39c12;
+        }
+        #searchBtn:hover, #backBtn:hover {
+            background-color: #e67e22;
+        }
+        .student-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .student-card h3 {
+            margin-top: 0;
+        }
+        .payment-status {
+            margin-top: 10px;
+        }
+        .payment-status span {
+            display: inline-block;
+            width: 80px;
+        }
+        .download-btn {
+            background-color: #3498db;
+            margin-top: 10px;
+        }
+        .download-btn:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Student Details</h1>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search by name...">
+            <button id="searchBtn">Search</button>
+        </div>
+        <div id="studentDetails"></div>
+        <button id="backBtn">Back to Admission Page</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+            const studentDetails = document.getElementById('studentDetails');
+            const backBtn = document.getElementById('backBtn');
+
+            searchBtn.addEventListener('click', searchStudents);
+            backBtn.addEventListener('click', () => {
+                window.location.href = 'index.html';
+            });
+
+            function searchStudents() {
+                const searchTerm = searchInput.value.toLowerCase();
+                let students = JSON.parse(localStorage.getItem('students')) || [];
+                let payments = JSON.parse(localStorage.getItem('payments')) || {};
+
+                const filteredStudents = students.filter(student => 
+                    student.name.toLowerCase().includes(searchTerm)
+                );
+
+                studentDetails.innerHTML = '';
+
+                filteredStudents.forEach(student => {
+                    const studentCard = document.createElement('div');
+                    studentCard.className = 'student-card';
+
+                    const studentInfo = `
+                        <h3>${student.name}</h3>
+                        <p><strong>Email:</strong> ${student.email}</p>
+                        <p><strong>Phone:</strong> ${student.phone}</p>
+                        <p><strong>Date of Birth:</strong> ${student.dob}</p>
+                        <p><strong>Course:</strong> ${student.course}</p>
+                        <div class="payment-status">
+                            <h4>Payment Status:</h4>
+                            ${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+                                .map(month => `<p><span>${month}:</span> ${(payments[student.name] && payments[student.name][month]) || 'Not Paid'}</p>`)
+                                .join('')}
+                        </div>
+                        <button class="download-btn" onclick="downloadStudentData('${student.name}')">Download Data</button>
+                    `;
+
+                    studentCard.innerHTML = studentInfo;
+                    studentDetails.appendChild(studentCard);
+                });
+
+                if (filteredStudents.length === 0) {
+                    studentDetails.innerHTML = '<p>No matching students found</p>';
+                }
+            }
+
+            // Load all students initially
+            searchStudents();
+        });
+
+        function downloadStudentData(studentName) {
+            let students = JSON.parse(localStorage.getItem('students')) || [];
+            let payments = JSON.parse(localStorage.getItem('payments')) || {};
+
+            const student = students.find(s => s.name === studentName);
+            const studentPayments = payments[studentName] || {};
+
+            if (!student) {
+                alert('Student not found');
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.setFontSize(18);
+            doc.text(`Student Details: ${student.name}`, 14, 22);
+
+            doc.setFontSize(12);
+            doc.text(`Email: ${student.email}`, 14, 32);
+            doc.text(`Phone: ${student.phone}`, 14, 40);
+            doc.text(`Date of Birth: ${student.dob}`, 14, 48);
+            doc.text(`Course: ${student.course}`, 14, 56);
+
+            doc.setFontSize(14);
+            doc.text('Payment Status:', 14, 68);
+
+            let yPos = 76;
+            ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].forEach(month => {
+                doc.setFontSize(12);
+                doc.text(`${month}: ${studentPayments[month] || 'Not Paid'}`, 14, yPos);
+                yPos += 8;
+            });
+
+            doc.save(`${studentName.replace(' ', '_')}_details.pdf`);
+        }
+    </script>
+</body>
+</html>
