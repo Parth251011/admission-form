@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Payment Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #333;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        select {
+            width: 100%;
+            padding: 5px;
+        }
+        .paid {
+            background-color: #dff0d8;
+        }
+        .not-paid {
+            background-color: #f2dede;
+        }
+        .half-paid {
+            background-color: #fcf8e3;
+        }
+        #backBtn {
+            background-color: #f39c12;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        #backBtn:hover {
+            background-color: #e67e22;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Student Payment Management</h1>
+        <table id="paymentsTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Course</th>
+                    <th>Jan</th>
+                    <th>Feb</th>
+                    <th>Mar</th>
+                    <th>Apr</th>
+                    <th>May</th>
+                    <th>Jun</th>
+                    <th>Jul</th>
+                    <th>Aug</th>
+                    <th>Sep</th>
+                    <th>Oct</th>
+                    <th>Nov</th>
+                    <th>Dec</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <button id="backBtn">Back to Admission Page</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const table = document.getElementById('paymentsTable').getElementsByTagName('tbody')[0];
+            const backBtn = document.getElementById('backBtn');
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+            loadPayments();
+
+            backBtn.addEventListener('click', () => {
+                window.location.href = 'index.html';
+            });
+
+            function loadPayments() {
+                let students = JSON.parse(localStorage.getItem('students')) || [];
+                let payments = JSON.parse(localStorage.getItem('payments')) || {};
+
+                students.forEach(student => {
+                    const row = table.insertRow();
+                    row.insertCell().textContent = student.name;
+                    row.insertCell().textContent = student.course;
+
+                    months.forEach(month => {
+                        const cell = row.insertCell();
+                        const select = document.createElement('select');
+                        ['Not Paid', 'Half Paid', 'Paid'].forEach(status => {
+                            const option = document.createElement('option');
+                            option.value = status.toLowerCase().replace(' ', '-');
+                            option.textContent = status;
+                            select.appendChild(option);
+                        });
+
+                        const paymentStatus = (payments[student.name] && payments[student.name][month]) || 'not-paid';
+                        select.value = paymentStatus;
+                        select.className = paymentStatus;
+
+                        select.addEventListener('change', (e) => {
+                            updatePaymentStatus(student.name, month, e.target.value);
+                            e.target.className = e.target.value;
+                        });
+
+                        cell.appendChild(select);
+                    });
+                });
+            }
+
+            function updatePaymentStatus(studentName, month, status) {
+                let payments = JSON.parse(localStorage.getItem('payments')) || {};
+                if (!payments[studentName]) {
+                    payments[studentName] = {};
+                }
+                payments[studentName][month] = status;
+                localStorage.setItem('payments', JSON.stringify(payments));
+            }
+        });
+    </script>
+</body>
+</html>
