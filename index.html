@@ -4,139 +4,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Admission Data</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-        .container {
-            max-width: 800px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h1, h2 {
-            color: #333;
-            text-align: center;
-        }
-        form {
-            display: grid;
-            gap: 10px;
-        }
-        label {
-            font-weight: bold;
-        }
-        input, select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .button-container {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-        #paymentBtn, #detailsBtn {
-            background-color: #f39c12;
-        }
-        #paymentBtn:hover, #detailsBtn:hover {
-            background-color: #e67e22;
-        }
-        .search-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        #searchInput {
-            flex-grow: 1;
-        }
-        #searchBtn {
-            background-color: #f39c12;
-        }
-        #searchBtn:hover {
-            background-color: #e67e22;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Arial:wght@400;700&display=swap');
     </style>
 </head>
-<body>
-    <div class="container">
-        <h1>Student Admission Form</h1>
-        <form id="admissionForm">
-            <label for="name">Name:</label>
-            <input type="text" id="name" required>
-            
-            <label for="email">Email:</label>
-            <input type="email" id="email" required>
-            
-            <label for="phone">Phone:</label>
-            <input type="tel" id="phone" required>
-            
-            <label for="dob">Date of Birth:</label>
-            <input type="date" id="dob" required>
-            
-            <label for="course">Course:</label>
-            <select id="course" required>
-                <option value="">Select a course</option>
-                <option value="Computer Science">Computer Science</option>
-                <option value="Engineering">Engineering</option>
-                <option value="Business">Business</option>
-                <option value="Arts">Arts</option>
-            </select>
-            
-            <button type="submit">Submit</button>
+<body class="font-sans leading-relaxed m-0 p-5 bg-gray-100 min-h-screen">
+    <div class="max-w-3xl mx-auto bg-white p-5 rounded-lg shadow-md">
+        <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">Student Admission Form</h1>
+        <form id="admissionForm" class="grid gap-4">
+            <div>
+                <label for="name" class="block font-bold text-gray-700">Name:</label>
+                <input type="text" id="name" required class="w-full p-2 border border-gray-300 rounded">
+            </div>
+            <div>
+                <label for="email" class="block font-bold text-gray-700">Email:</label>
+                <input type="email" id="email" required class="w-full p-2 border border-gray-300 rounded">
+            </div>
+            <div>
+                <label for="phone" class="block font-bold text-gray-700">Phone:</label>
+                <input type="tel" id="phone" required class="w-full p-2 border border-gray-300 rounded">
+            </div>
+            <div>
+                <label for="dob" class="block font-bold text-gray-700">Date of Birth:</label>
+                <input type="date" id="dob" required class="w-full p-2 border border-gray-300 rounded">
+            </div>
+            <div>
+                <label for="course" class="block font-bold text-gray-700">Course:</label>
+                <select id="course" required class="w-full p-2 border border-gray-300 rounded">
+                    <option value="">Select a course</option>
+                    <option value="Computer Science">Computer Science</option>
+                    <option value="Engineering">Engineering</option>
+                    <option value="Business">Business</option>
+                    <option value="Arts">Arts</option>
+                </select>
+            </div>
+            <button type="submit" class="bg-green-500 text-white p-2 rounded cursor-pointer hover:bg-green-600 transition-colors">Submit</button>
         </form>
         
-        <h2>Admitted Students</h2>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search by name...">
-            <button id="searchBtn">Search</button>
+        <h2 class="text-xl font-bold text-center text-gray-800 mt-8 mb-4">Admitted Students</h2>
+        <div class="flex gap-2 mb-4">
+            <input type="text" id="searchInput" placeholder="Search by name..." class="flex-grow p-2 border border-gray-300 rounded">
+            <button id="searchBtn" class="bg-yellow-500 text-white p-2 rounded cursor-pointer hover:bg-yellow-600 transition-colors">Search</button>
         </div>
-        <table id="studentsTable">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Date of Birth</th>
-                    <th>Course</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-        
-        <div class="button-container">
-            <button id="paymentBtn">Manage Payments</button>
-            <button id="detailsBtn">Student Details</button>
+        <div class="overflow-x-auto">
+            <table id="studentsTable" class="w-full border-collapse">
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th class="border border-gray-300 p-2 text-left">Name</th>
+                        <th class="border border-gray-300 p-2 text-left">Email</th>
+                        <th class="border border-gray-300 p-2 text-left">Phone</th>
+                        <th class="border border-gray-300 p-2 text-left">Date of Birth</th>
+                        <th class="border border-gray-300 p-2 text-left">Course</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="flex justify-between mt-4">
+            <button id="paymentBtn" class="bg-yellow-500 text-white p-2 rounded cursor-pointer hover:bg-yellow-600 transition-colors">Manage Payments</button>
+            <button id="detailsBtn" class="bg-yellow-500 text-white p-2 rounded cursor-pointer hover:bg-yellow-600 transition-colors">Student Details</button>
         </div>
     </div>
 
@@ -149,7 +76,6 @@
             const searchInput = document.getElementById('searchInput');
             const searchBtn = document.getElementById('searchBtn');
 
-            // Load existing data
             loadStudents();
 
             form.addEventListener('submit', (e) => {
@@ -169,11 +95,11 @@
             });
 
             paymentBtn.addEventListener('click', () => {
-                window.location.href = 'payments.html';
+                alert('Manage Payments functionality not implemented');
             });
 
             detailsBtn.addEventListener('click', () => {
-                window.location.href = 'details.html';
+                alert('Student Details functionality not implemented');
             });
 
             searchBtn.addEventListener('click', searchStudents);
@@ -194,6 +120,7 @@
                 Object.values(student).forEach(text => {
                     const cell = row.insertCell();
                     cell.textContent = text;
+                    cell.className = 'border border-gray-300 p-2';
                 });
             }
 
@@ -204,10 +131,7 @@
                     student.name.toLowerCase().includes(searchTerm)
                 );
 
-                // Clear the table
                 table.innerHTML = '';
-
-                // Add filtered students to the table
                 filteredStudents.forEach(addStudentToTable);
 
                 if (filteredStudents.length === 0) {
@@ -215,6 +139,7 @@
                     const cell = row.insertCell();
                     cell.colSpan = 5;
                     cell.textContent = 'No matching students found';
+                    cell.className = 'border border-gray-300 p-2 text-center';
                 }
             }
         });
